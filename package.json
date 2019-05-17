@@ -1,0 +1,135 @@
+{
+  "name": "json2csv",
+  "displayName": "JSON to CSV",
+  "description": "Convert JSON to CSV, and CSV to JSON.",
+  "version": "0.0.1",
+  "publisher": "khaeransori",
+  "engines": {
+    "vscode": "^1.27.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "json",
+    "csv",
+    "convert"
+  ],
+  "activationEvents": [
+    "onCommand:json2csv.toCSV",
+    "onCommand:json2csv.toJSON"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "json2csv.toCSV",
+        "title": "Convert JSON to CSV"
+      },
+      {
+        "command": "json2csv.toJSON",
+        "title": "Convert CSV to JSON"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "toCSV configuration",
+      "properties": {
+        "json2csv.toCSV.checkSchemaDifferences": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should all documents have the same schema? Note: An error will be thrown if some documents have differing schemas when this is set to true."
+        },
+        "json2csv.toCSV.expandArrayObjects": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should objects in array values be deep-converted to CSV?"
+        },
+        "json2csv.toCSV.prependHeader": {
+          "type": "boolean",
+          "default": true,
+          "description": "Should the auto-generated header be prepended as the first line in the CSV?"
+        },
+        "json2csv.toCSV.sortHeader": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the header keys be sorted in alphabetical order?"
+        },
+        "json2csv.toCSV.delimiter.field": {
+          "type": "string",
+          "default": ",",
+          "description": "Field Delimiter."
+        },
+        "json2csv.toCSV.delimiter.wrap": {
+          "type": "string",
+          "default": "\"",
+          "description": "Wrap values in the delimiter of choice (e.g. wrap values in quotes)."
+        },
+        "json2csv.toCSV.delimiter.eol": {
+          "type": "string",
+          "default": "\n",
+          "description": "End of Line Delimiter."
+        },
+        "json2csv.toCSV.excelBOM": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should a unicode character be prepended to allow Excel to open a UTF-8 encoded file with non-ASCII characters present."
+        },
+        "json2csv.toCSV.trimHeaderFields": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the header fields be trimmed?"
+        },
+        "json2csv.toCSV.trimFieldValues": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the field values be trimmed? (in development)"
+        },
+        "json2csv.toJSON.delimiter.field": {
+          "type": "string",
+          "default": ",",
+          "description": "Field Delimiter."
+        },
+        "json2csv.toJSON.delimiter.wrap": {
+          "type": "string",
+          "default": "\"",
+          "description": "Wrap values in the delimiter of choice (e.g. wrap values in quotes)."
+        },
+        "json2csv.toJSON.delimiter.eol": {
+          "type": "string",
+          "default": "\n",
+          "description": "End of Line Delimiter."
+        },
+        "json2csv.toJSON.excelBOM": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should a unicode character be prepended to allow Excel to open a UTF-8 encoded file with non-ASCII characters present."
+        },
+        "json2csv.toJSON.trimHeaderFields": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the header fields be trimmed?"
+        },
+        "json2csv.toJSON.trimFieldValues": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the field values be trimmed? (in development)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.28",
+    "eslint": "^5.13.0",
+    "@types/node": "^10.12.21",
+    "@types/mocha": "^2.2.42"
+  },
+  "dependencies": {
+    "json-2-csv": "^3.5.3"
+  }
+}
