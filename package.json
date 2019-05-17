@@ -4,6 +4,15 @@
   "description": "Convert JSON to CSV, and CSV to JSON.",
   "version": "0.0.1",
   "publisher": "khaeransori",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khaeransori/vscode-json2csv.git"
+  },
+  "bugs": {
+    "url": "https://github.com/khaeransori/vscode-json2csv/issues"
+  },
+  "homepage": "https://github.com/khaeransori/vscode-json2csv",
   "engines": {
     "vscode": "^1.27.0"
   },
