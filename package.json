@@ -1,8 +1,13 @@
 {
   "name": "json2csv",
   "displayName": "JSON to CSV",
-  "description": "Convert JSON to CSV, and CSV to JSON.",
-  "version": "0.0.1",
+  "description": "Bidirectional JSON-CSV Converter - transform JSON files into CSV and CSV files into JSON with ease.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Khaer Ansori",
+    "email": "hello@khaeransori.com",
+    "url": "https://khaeransori.com"
+  },
   "publisher": "khaeransori",
   "license": "MIT",
   "repository": {
@@ -17,18 +22,29 @@
     "vscode": "^1.27.0"
   },
   "categories": [
+    "Data Science",
+    "Formatters",
     "Other"
   ],
   "keywords": [
     "json",
     "csv",
-    "convert"
+    "convert",
+    "json2csv",
+    "csv2json",
+    "visual studio code",
+    "developer tools"
   ],
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#007ACC",
+    "theme": "dark"
+  },
   "activationEvents": [
-    "onCommand:json2csv.toCSV",
-    "onCommand:json2csv.toJSON"
+    "onLanguage:json",
+    "onLanguage:csv"
   ],
-  "main": "./extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -38,31 +54,29 @@
       {
         "command": "json2csv.toJSON",
         "title": "Convert CSV to JSON"
+      },
+      {
+        "command": "json2csv.toCSV.clipboard",
+        "title": "Convert JSON to CSV (Clipboard)"
+      },
+      {
+        "command": "json2csv.toJSON.clipboard",
+        "title": "Convert CSV to JSON (Clipboard)"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "toCSV configuration",
+      "title": "json2csv",
       "properties": {
+        "json2csv.toCSV.arrayIndexesAsKeys": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Should array indexes be included in the generated keys?\n\n_Note: This provides a more accurate representation of the JSON in the returned CSV, but may be less human readable. See [#207](https://github.com/mrodrig/json-2-csv/issues/207) for more details._"
+        },
         "json2csv.toCSV.checkSchemaDifferences": {
           "type": "boolean",
           "default": false,
-          "description": "Should all documents have the same schema? Note: An error will be thrown if some documents have differing schemas when this is set to true."
-        },
-        "json2csv.toCSV.expandArrayObjects": {
-          "type": "boolean",
-          "default": false,
-          "description": "Should objects in array values be deep-converted to CSV?"
-        },
-        "json2csv.toCSV.prependHeader": {
-          "type": "boolean",
-          "default": true,
-          "description": "Should the auto-generated header be prepended as the first line in the CSV?"
-        },
-        "json2csv.toCSV.sortHeader": {
-          "type": "boolean",
-          "default": false,
-          "description": "Should the header keys be sorted in alphabetical order?"
+          "markdownDescription": "Should all documents have the same schema?\n\n_Note: An error will be thrown if some documents have differing schemas when this is set to `true`._"
         },
         "json2csv.toCSV.delimiter.field": {
           "type": "string",
@@ -77,22 +91,77 @@
         "json2csv.toCSV.delimiter.eol": {
           "type": "string",
           "default": "\n",
+          "enum": [
+            "\n",
+            "\r",
+            "\r\n"
+          ],
+          "enumDescriptions": [
+            "LF(\\n) Unix, Linux, Mac OS (newer versions)",
+            "CR(\\r) Classic Mac OS (up to version 9)",
+            "CRLF(\\r\\n) Windows, DOS (MS-DOS, PC DOS, etc.)"
+          ],
           "description": "End of Line Delimiter."
+        },
+        "json2csv.toCSV.emptyFieldValue": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Value that, if specified, will be substituted in for field values that are `undefined`, `null`, or an empty string."
         },
         "json2csv.toCSV.excelBOM": {
           "type": "boolean",
           "default": false,
           "description": "Should a unicode character be prepended to allow Excel to open a UTF-8 encoded file with non-ASCII characters present."
         },
+        "json2csv.toCSV.expandNestedObjects": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Should nested objects be deep-converted to CSV?\n\n_Note: Set this to `false` may result in CSV output that does not map back exactly to the original JSON_"
+        },
+        "json2csv.toCSV.expandArrayObjects": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should objects in array values be deep-converted to CSV?\n\n_Note: This may result in CSV output that does not map back exactly to the original JSON. See [#102](https://github.com/mrodrig/json-2-csv/issues/102) for more information._"
+        },
+        "json2csv.toCSV.prependHeader": {
+          "type": "boolean",
+          "default": true,
+          "description": "Should the auto-generated header be prepended as the first line in the CSV?"
+        },
+        "json2csv.toCSV.sortHeader": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the header keys be sorted in alphabetical order?"
+        },
+        "json2csv.toCSV.trimFieldValues": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the field values be trimmed?"
+        },
         "json2csv.toCSV.trimHeaderFields": {
           "type": "boolean",
           "default": false,
           "description": "Should the header fields be trimmed?"
         },
-        "json2csv.toCSV.trimFieldValues": {
+        "json2csv.toCSV.useDateIso8601Format": {
           "type": "boolean",
           "default": false,
-          "description": "Should the field values be trimmed? (in development)"
+          "markdownDescription": "Should date values be converted to an ISO8601 date string?\n\n_Note: If selected, values will be converted using `toISOString()` rather than `toString()` or `toLocaleString()` depending on the other options provided._"
+        },
+        "json2csv.toCSV.useLocaleFormat": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Should date values be converted to a locale-specific string?\n\n_Note: If selected, values will be converted using `toLocaleString()` rather than `toString()`_"
+        },
+        "json2csv.toCSV.wrapBooleans": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should boolean values be wrapped in wrap delimiters to prevent Excel from converting them to Excel's TRUE/FALSE Boolean values."
+        },
+        "json2csv.toCSV.preventCsvInjection": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should CSV injection be prevented by left trimming these characters: Equals (=), Plus (+), Minus (-), At (@), Tab (0x09), Carriage return (0x0D)."
         },
         "json2csv.toJSON.delimiter.field": {
           "type": "string",
@@ -107,6 +176,16 @@
         "json2csv.toJSON.delimiter.eol": {
           "type": "string",
           "default": "\n",
+          "enum": [
+            "\n",
+            "\r",
+            "\r\n"
+          ],
+          "enumDescriptions": [
+            "LF(\\n) Unix, Linux, Mac OS (newer versions)",
+            "CR(\\r) Classic Mac OS (up to version 9)",
+            "CRLF(\\r\\n) Windows, DOS (MS-DOS, PC DOS, etc.)"
+          ],
           "description": "End of Line Delimiter."
         },
         "json2csv.toJSON.excelBOM": {
@@ -122,23 +201,46 @@
         "json2csv.toJSON.trimFieldValues": {
           "type": "boolean",
           "default": false,
-          "description": "Should the field values be trimmed? (in development)"
+          "description": "Should the field values be trimmed?"
+        },
+        "json2csv.toJSON.parseStringLiteralNull": {
+          "type": "boolean",
+          "default": false,
+          "description": "Should the string literal 'null' be parsed as a null value?\n\n_Note: case-insensitive comparison is used._"
         }
       }
     }
   },
   "scripts": {
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test"
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
   },
   "devDependencies": {
-    "typescript": "^3.3.1",
-    "vscode": "^1.1.28",
-    "eslint": "^5.13.0",
-    "@types/node": "^10.12.21",
-    "@types/mocha": "^2.2.42"
+    "@types/mocha": "^10.0.8",
+    "@types/node": "20.x",
+    "@types/sinon": "^17.0.3",
+    "@types/vscode": "^1.27.0",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.11.1",
+    "sinon": "^19.0.2",
+    "typescript": "^5.6.2"
   },
   "dependencies": {
-    "json-2-csv": "^3.5.3"
+    "json-2-csv": "^5.5.6",
+    "lossless-json": "^4.0.2"
   }
 }
