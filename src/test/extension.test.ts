@@ -174,10 +174,12 @@ suite("Extension Test Suite", () => {
 
   test("toJSON should not throw on terminator-only input", () => {
     // Stripping a trailing newline must not reduce a lone-terminator selection
-    // to "" (which makes csv2json throw); it should convert successfully.
+    // to "" (which makes csv2json throw); it should convert successfully to a
+    // valid (empty) array rather than erroring.
     for (const eol of ["\n", "\r\n", "\r"]) {
       const result: ConversionResult = myExtension.toJSON(eol);
       assert.strictEqual(result.success, true);
+      assert.ok(Array.isArray(JSON.parse(result.convertedText)));
     }
   });
 });
