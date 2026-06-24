@@ -120,6 +120,24 @@ export function toCSV(text: string): ConversionResult {
   }
 }
 
+// Detect the end-of-line sequence actually used by the input so CRLF (Windows)
+// and CR (classic Mac) files don't leave stray \r characters glued to the last
+// field of each row. Returns undefined for single-line input so the caller can
+// fall back to the configured value.
+export function detectEol(text: string): string | undefined {
+  if (text.includes("\r\n")) {
+    return "\r\n";
+  }
+  if (text.includes("\r")) {
+    return "\r";
+  }
+  if (text.includes("\n")) {
+    return "\n";
+  }
+
+  return undefined;
+}
+
 export function toJSON(text: string): ConversionResult {
   try {
     const csv = text;
@@ -131,7 +149,7 @@ export function toJSON(text: string): ConversionResult {
         ? {
             wrap: config.delimiter.wrap,
             field: config.delimiter.field,
-            eol: config.delimiter.eol,
+            eol: detectEol(csv) ?? config.delimiter.eol,
           }
         : undefined,
       excelBOM: config.excelBOM,

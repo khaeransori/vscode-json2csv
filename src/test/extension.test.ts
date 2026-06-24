@@ -107,4 +107,33 @@ suite("Extension Test Suite", () => {
     assert.ok(result.convertedText.includes('"age": 25'));
     assert.ok(result.convertedText.includes('"isActive": false'));
   });
+
+  test("detectEol should detect CRLF, CR, LF and single-line input", () => {
+    assert.strictEqual(myExtension.detectEol("a\r\nb"), "\r\n");
+    assert.strictEqual(myExtension.detectEol("a\rb"), "\r");
+    assert.strictEqual(myExtension.detectEol("a\nb"), "\n");
+    assert.strictEqual(myExtension.detectEol("a"), undefined);
+  });
+
+  test("toJSON should not leave a trailing carriage return on CRLF input", () => {
+    // Regression test for #22: CRLF line endings used to leave a stray \r on
+    // the last column's key and value.
+    const csvCRLF =
+      "name,subnetName,addressPrefix,subnetPrefix\r\n" +
+      "L-MDS,L-MDS-001,10.220.4.0/22,10.220.4.0/24";
+    const result: ConversionResult = myExtension.toJSON(csvCRLF);
+    assert.strictEqual(result.success, true);
+    assert.ok(!result.convertedText.includes("\\r"));
+    assert.ok(result.convertedText.includes('"subnetPrefix": "10.220.4.0/24"'));
+  });
+
+  test("toJSON should handle CR line endings", () => {
+    const csvCR = "name,age\rJohn,30\rJane,25";
+    const result: ConversionResult = myExtension.toJSON(csvCR);
+    assert.strictEqual(result.success, true);
+    assert.ok(!result.convertedText.includes("\\r"));
+    assert.ok(result.convertedText.includes('"name": "John"'));
+    assert.ok(result.convertedText.includes('"age": 30'));
+    assert.ok(result.convertedText.includes('"name": "Jane"'));
+  });
 });
