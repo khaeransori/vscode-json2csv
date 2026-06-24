@@ -173,21 +173,6 @@
           "default": "\"",
           "description": "Wrap values in the delimiter of choice (e.g. wrap values in quotes)."
         },
-        "json2csv.toJSON.delimiter.eol": {
-          "type": "string",
-          "default": "\n",
-          "enum": [
-            "\n",
-            "\r",
-            "\r\n"
-          ],
-          "enumDescriptions": [
-            "LF(\\n) Unix, Linux, Mac OS (newer versions)",
-            "CR(\\r) Classic Mac OS (up to version 9)",
-            "CRLF(\\r\\n) Windows, DOS (MS-DOS, PC DOS, etc.)"
-          ],
-          "description": "End of Line Delimiter."
-        },
         "json2csv.toJSON.excelBOM": {
           "type": "boolean",
           "default": false,

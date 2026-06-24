@@ -149,9 +149,9 @@ export function toJSON(text: string): ConversionResult {
     // Detect the end-of-line from the input so CRLF (Windows) and CR (classic
     // Mac) files parse without leaving stray carriage returns on the last field
     // of each row. The input's actual line endings are authoritative when
-    // parsing, so detection wins; the configured value is only a fallback for
-    // single-line input that has no terminator to detect.
-    const eol = detectEol(text) ?? config.delimiter?.eol;
+    // parsing. Single-line input has no terminator to detect, in which case
+    // csv2json falls back to its own default.
+    const eol = detectEol(text);
 
     // Drop a single trailing line terminator so input that ends with a newline
     // (the common case) doesn't produce a phantom empty record. The length
