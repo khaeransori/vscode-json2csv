@@ -2,7 +2,7 @@
   "name": "json2csv",
   "displayName": "JSON to CSV",
   "description": "Bidirectional JSON-CSV Converter - transform JSON files into CSV and CSV files into JSON with ease.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Khaer Ansori",
     "email": "hello@khaeransori.com",
