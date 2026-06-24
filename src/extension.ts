@@ -142,22 +142,24 @@ export function detectEol(text: string): string | undefined {
 
 export function toJSON(text: string): ConversionResult {
   try {
-    const configuration = vscode.workspace.getConfiguration("json2csv.toJSON");
-    const config = configuration as ExtCsv2JsonOptions;
+    const config = vscode.workspace.getConfiguration(
+      "json2csv.toJSON"
+    ) as ExtCsv2JsonOptions;
 
-    // Honor an explicitly configured end-of-line; otherwise detect it from the
-    // input so CRLF (Windows) and CR (classic Mac) files parse without leaving
-    // stray carriage returns on the last field of each row.
-    const eolSetting = configuration.inspect<string>("delimiter.eol");
-    const explicitEol =
-      eolSetting?.workspaceFolderValue ??
-      eolSetting?.workspaceValue ??
-      eolSetting?.globalValue;
-    const eol = explicitEol ?? detectEol(text) ?? config.delimiter?.eol;
+    // Detect the end-of-line from the input so CRLF (Windows) and CR (classic
+    // Mac) files parse without leaving stray carriage returns on the last field
+    // of each row. The input's actual line endings are authoritative when
+    // parsing, so detection wins; the configured value is only a fallback for
+    // single-line input that has no terminator to detect.
+    const eol = detectEol(text) ?? config.delimiter?.eol;
 
     // Drop a single trailing line terminator so input that ends with a newline
-    // (the common case) doesn't produce a phantom empty record.
-    const csv = eol && text.endsWith(eol) ? text.slice(0, -eol.length) : text;
+    // (the common case) doesn't produce a phantom empty record. The length
+    // guard keeps terminator-only input intact instead of reducing it to "".
+    const csv =
+      eol && text.length > eol.length && text.endsWith(eol)
+        ? text.slice(0, -eol.length)
+        : text;
 
     const options: Csv2JsonOptions = {
       delimiter: config.delimiter

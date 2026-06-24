@@ -172,23 +172,12 @@ suite("Extension Test Suite", () => {
     }
   });
 
-  test("toJSON should honor an explicitly configured eol over auto-detection", async () => {
-    const cfg = vscode.workspace.getConfiguration("json2csv.toJSON");
-    await cfg.update("delimiter.eol", "\r\n", vscode.ConfigurationTarget.Global);
-    try {
-      // Pure LF input: auto-detection alone would split this into two records,
-      // but the explicit CRLF setting must win, so the \n is not a terminator.
-      const result: ConversionResult = myExtension.toJSON(
-        "name,age\nJohn,30\nJane,25"
-      );
+  test("toJSON should not throw on terminator-only input", () => {
+    // Stripping a trailing newline must not reduce a lone-terminator selection
+    // to "" (which makes csv2json throw); it should convert successfully.
+    for (const eol of ["\n", "\r\n", "\r"]) {
+      const result: ConversionResult = myExtension.toJSON(eol);
       assert.strictEqual(result.success, true);
-      assert.deepStrictEqual(JSON.parse(result.convertedText), []);
-    } finally {
-      await cfg.update(
-        "delimiter.eol",
-        undefined,
-        vscode.ConfigurationTarget.Global
-      );
     }
   });
 });
