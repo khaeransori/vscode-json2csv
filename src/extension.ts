@@ -120,19 +120,21 @@ export function toCSV(text: string): ConversionResult {
   }
 }
 
-// Detect the end-of-line sequence actually used by the input so CRLF (Windows)
-// and CR (classic Mac) files don't leave stray \r characters glued to the last
+// Detect the end-of-line sequence used to terminate rows so CRLF (Windows) and
+// CR (classic Mac) files don't leave stray \r characters glued to the last
 // field of each row. Returns undefined for single-line input so the caller can
 // fall back to the configured value.
+//
+// The check is on the row terminator, not on any occurrence of \r\n: a bare \n
+// (one not preceded by \r) means rows are LF-terminated even if a quoted field
+// happens to contain an embedded \r\n. Treating such a file as CRLF would split
+// rows on the embedded sequence and mangle or drop the data.
 export function detectEol(text: string): string | undefined {
-  if (text.includes("\r\n")) {
-    return "\r\n";
+  if (text.includes("\n")) {
+    return /(^|[^\r])\n/.test(text) ? "\n" : "\r\n";
   }
   if (text.includes("\r")) {
     return "\r";
-  }
-  if (text.includes("\n")) {
-    return "\n";
   }
 
   return undefined;

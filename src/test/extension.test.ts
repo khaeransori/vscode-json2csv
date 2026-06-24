@@ -115,6 +115,14 @@ suite("Extension Test Suite", () => {
     assert.strictEqual(myExtension.detectEol("a"), undefined);
   });
 
+  test("detectEol should key off the row terminator, not embedded breaks", () => {
+    // A bare \n means LF-terminated rows even when a quoted field contains an
+    // embedded \r\n, so it must not be misdetected as CRLF.
+    assert.strictEqual(myExtension.detectEol('a\n"x\r\ny"'), "\n");
+    // Every \n preceded by \r (incl. a trailing newline) is a real CRLF file.
+    assert.strictEqual(myExtension.detectEol("a,b\r\n1,2\r\n"), "\r\n");
+  });
+
   test("toJSON should not leave a trailing carriage return on CRLF input", () => {
     // Regression test for #22: CRLF line endings used to leave a stray \r on
     // the last column's key and value.
@@ -135,5 +143,17 @@ suite("Extension Test Suite", () => {
     assert.ok(result.convertedText.includes('"name": "John"'));
     assert.ok(result.convertedText.includes('"age": 30'));
     assert.ok(result.convertedText.includes('"name": "Jane"'));
+  });
+
+  test("toJSON should preserve an embedded CRLF inside an LF-terminated row", () => {
+    // LF-terminated rows with a quoted field that contains a literal \r\n must
+    // still split on \n and keep the embedded sequence in the value.
+    const csv = 'name,note\n"a","line1\r\nline2"\n"b","plain"';
+    const result: ConversionResult = myExtension.toJSON(csv);
+    assert.strictEqual(result.success, true);
+    assert.ok(result.convertedText.includes('"name": "a"'));
+    assert.ok(result.convertedText.includes('"note": "line1\\r\\nline2"'));
+    assert.ok(result.convertedText.includes('"name": "b"'));
+    assert.ok(result.convertedText.includes('"note": "plain"'));
   });
 });
