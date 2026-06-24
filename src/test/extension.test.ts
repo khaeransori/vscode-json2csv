@@ -156,4 +156,39 @@ suite("Extension Test Suite", () => {
     assert.ok(result.convertedText.includes('"name": "b"'));
     assert.ok(result.convertedText.includes('"note": "plain"'));
   });
+
+  test("toJSON should not emit a phantom record for a trailing newline", () => {
+    // A file ending in its line terminator must not yield an extra empty
+    // record. This used to happen on CRLF because the trailing \r\n was kept.
+    const expected = [
+      { name: "John", age: 30 },
+      { name: "Jane", age: 25 },
+    ];
+    for (const eol of ["\n", "\r\n", "\r"]) {
+      const csv = `name,age${eol}John,30${eol}Jane,25${eol}`;
+      const result: ConversionResult = myExtension.toJSON(csv);
+      assert.strictEqual(result.success, true);
+      assert.deepStrictEqual(JSON.parse(result.convertedText), expected);
+    }
+  });
+
+  test("toJSON should honor an explicitly configured eol over auto-detection", async () => {
+    const cfg = vscode.workspace.getConfiguration("json2csv.toJSON");
+    await cfg.update("delimiter.eol", "\r\n", vscode.ConfigurationTarget.Global);
+    try {
+      // Pure LF input: auto-detection alone would split this into two records,
+      // but the explicit CRLF setting must win, so the \n is not a terminator.
+      const result: ConversionResult = myExtension.toJSON(
+        "name,age\nJohn,30\nJane,25"
+      );
+      assert.strictEqual(result.success, true);
+      assert.deepStrictEqual(JSON.parse(result.convertedText), []);
+    } finally {
+      await cfg.update(
+        "delimiter.eol",
+        undefined,
+        vscode.ConfigurationTarget.Global
+      );
+    }
+  });
 });
