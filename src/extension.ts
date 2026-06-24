@@ -120,18 +120,53 @@ export function toCSV(text: string): ConversionResult {
   }
 }
 
+// Detect the end-of-line sequence used to terminate rows so CRLF (Windows) and
+// CR (classic Mac) files don't leave stray \r characters glued to the last
+// field of each row. Returns undefined for single-line input, which has no
+// terminator to detect.
+//
+// The check is on the row terminator, not on any occurrence of \r\n: a bare \n
+// (one not preceded by \r) means rows are LF-terminated even if a quoted field
+// happens to contain an embedded \r\n. Treating such a file as CRLF would split
+// rows on the embedded sequence and mangle or drop the data.
+export function detectEol(text: string): string | undefined {
+  if (text.includes("\n")) {
+    return /(^|[^\r])\n/.test(text) ? "\n" : "\r\n";
+  }
+  if (text.includes("\r")) {
+    return "\r";
+  }
+
+  return undefined;
+}
+
 export function toJSON(text: string): ConversionResult {
   try {
-    const csv = text;
     const config = vscode.workspace.getConfiguration(
       "json2csv.toJSON"
     ) as ExtCsv2JsonOptions;
+
+    // Detect the end-of-line from the input so CRLF (Windows) and CR (classic
+    // Mac) files parse without leaving stray carriage returns on the last field
+    // of each row. The input's actual line endings are authoritative when
+    // parsing. Single-line input has no terminator to detect, in which case
+    // csv2json falls back to its own default.
+    const eol = detectEol(text);
+
+    // Drop a single trailing line terminator so input that ends with a newline
+    // (the common case) doesn't produce a phantom empty record. The length
+    // guard keeps terminator-only input intact instead of reducing it to "".
+    const csv =
+      eol && text.length > eol.length && text.endsWith(eol)
+        ? text.slice(0, -eol.length)
+        : text;
+
     const options: Csv2JsonOptions = {
       delimiter: config.delimiter
         ? {
             wrap: config.delimiter.wrap,
             field: config.delimiter.field,
-            eol: config.delimiter.eol,
+            eol,
           }
         : undefined,
       excelBOM: config.excelBOM,

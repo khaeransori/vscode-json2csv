@@ -75,7 +75,6 @@ _Note: If selected, values will be converted using `toISOString()` rather than `
 
 - `json2csv.toJSON.delimiter.field` (default: `,`): Field delimiter for CSV.
 - `json2csv.toJSON.delimiter.wrap` (default: `"`): Wrap values in the delimiter of choice.
-- `json2csv.toJSON.delimiter.eol` (default: `\n`): End of line delimiter.
 - `json2csv.toJSON.excelBOM` (default: `false`): Should a unicode character be prepended to allow Excel to open a UTF-8 encoded file with non-ASCII characters present.
 - `json2csv.toJSON.trimHeaderFields` (default: `false`): Should the header fields be trimmed?
 - `json2csv.toJSON.trimFieldValues` (default: `false`): Should the field values be trimmed?
