@@ -1,9 +1,9 @@
 
 # json2csv
 
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/khaeransori.json2csv?cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv)
-[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/khaeransori.json2csv?cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv)
-[![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/khaeransori.json2csv?cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv&ssr=false#review-details)
+[![Visual Studio Marketplace Version](https://vsmarketplacebadges.dev/version-short/khaeransori.json2csv.svg)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv)
+[![Visual Studio Marketplace Downloads](https://vsmarketplacebadges.dev/downloads-short/khaeransori.json2csv.svg)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv)
+[![Visual Studio Marketplace Rating](https://vsmarketplacebadges.dev/rating-short/khaeransori.json2csv.svg)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv&ssr=false#review-details)
 ![GitHub License](https://img.shields.io/github/license/khaeransori/vscode-json2csv)
 ![GitHub Issues](https://img.shields.io/github/issues/khaeransori/vscode-json2csv)
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/khaeransori/vscode-json2csv)
