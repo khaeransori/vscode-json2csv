@@ -1,13 +1,13 @@
 
 # json2csv
 
-![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/khaeransori.json2csv)
-![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/khaeransori.json2csv)
-![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/khaeransori.json2csv)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/khaeransori.json2csv?cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv)
+[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/khaeransori.json2csv?cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv)
+[![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/khaeransori.json2csv?cacheSeconds=3600)](https://marketplace.visualstudio.com/items?itemName=khaeransori.json2csv&ssr=false#review-details)
 ![GitHub License](https://img.shields.io/github/license/khaeransori/vscode-json2csv)
 ![GitHub Issues](https://img.shields.io/github/issues/khaeransori/vscode-json2csv)
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/khaeransori/vscode-json2csv)
-![Maintenance](https://img.shields.io/maintenance/yes/2024)
+![Maintenance](https://img.shields.io/maintenance/yes/2026)
 
 **json2csv** is a Visual Studio Code extension that allows you to easily convert between JSON and CSV formats, directly within the editor. It is designed to simplify data manipulation and format conversion for developers and data analysts, with support for **lossless conversion of big integer numbers**.
 
