@@ -1,0 +1,46 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+    - name: Check the tag matches the package version
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        tag="${GITHUB_REF_NAME#v}"
+        version="$(node -p "require('./package.json').version")"
+        if [ "$tag" != "$version" ]; then
+          echo "Tag $GITHUB_REF_NAME does not match package.json version $version." >&2
+          echo "Bump the version and re-tag before publishing." >&2
+          exit 1
+        fi
+        echo "Publishing version $version."
+    - run: npm ci
+    - name: Test
+      run: xvfb-run -a npm test
+    - name: Package
+      run: npx --yes @vscode/vsce package --out json2csv.vsix
+    - name: Publish to the Visual Studio Marketplace
+      run: npx --yes @vscode/vsce publish --packagePath json2csv.vsix
+      env:
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
+    - name: Create the GitHub release
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: gh release create "$GITHUB_REF_NAME" json2csv.vsix --title "$GITHUB_REF_NAME" --generate-notes
+      env:
+        GH_TOKEN: ${{ github.token }}
